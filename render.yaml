@@ -1,0 +1,25 @@
+# Render service configuration
+# See https://render.com/docs/yaml for more details
+
+services:
+  - type: web
+    name: student-management-backend
+    env: docker
+    plan: starter
+    # If your repo has multiple services, specify the path where this Dockerfile is located.
+    # In this repo it lives at the root.
+    dockerfilePath: ./Dockerfile
+    # If you want Render to build on a different branch, set it here (default is the branch the service points to).
+    # branch: main
+    
+    # Optional: you can set environment variables here, or set them via Render UI.
+    # Always avoid committing real secrets to version control.
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        value: "${SPRING_DATASOURCE_URL}"
+      - key: SPRING_DATASOURCE_USERNAME
+        value: "${SPRING_DATASOURCE_USERNAME}"
+      - key: SPRING_DATASOURCE_PASSWORD
+        value: "${SPRING_DATASOURCE_PASSWORD}"
+    
+    # Render will set $PORT automatically; application.properties uses it.
