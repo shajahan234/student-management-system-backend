@@ -1,15 +1,22 @@
 package office.com.config;
 
-import org.springframework.stereotype.Component;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
+
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Runs only for local (MySQL) profile. Uses MySQL-specific DDL.
+ * For PostgreSQL/prod, use Flyway/Liquibase or ensure schema is migrated separately.
+ */
 @Component
+@Profile("local")
 public class DatabaseUpdateConfig implements ApplicationRunner {
 
     private final DataSource dataSource;

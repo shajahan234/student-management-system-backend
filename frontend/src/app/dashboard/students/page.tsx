@@ -54,11 +54,21 @@ export default function StudentsPage() {
       const response = await fetch('/api/students', {
         headers: getAuthHeaders()
       })
+      if (!response.ok) {
+        if (response.status === 401) {
+          localStorage.removeItem('token')
+          router.push('/auth')
+          return
+        }
+        throw new Error('Failed to fetch')
+      }
       const data = await response.json()
       // ensure we always keep an array in state
       setStudents(Array.isArray(data) ? data : [])
     } catch (error) {
-      toast.error('Failed to fetch students')
+      console.error(error)
+      toast.error('Failed to fetch students. Is the backend running?')
+      setStudents([])
     } finally {
       setLoading(false)
     }
@@ -135,7 +145,7 @@ export default function StudentsPage() {
           </div>
         </div>
 
-        <div className="overflow-x-auto hidden sm:block">
+        <div className="overflow-x-auto hidden lg:block">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
@@ -242,8 +252,8 @@ export default function StudentsPage() {
           </table>
         </div>
 
-        {/* Mobile Card View */}
-        <div className="block sm:hidden space-y-4">
+        {/* Mobile & Tablet Card View */}
+        <div className="block lg:hidden space-y-4">
           {filteredStudents.map((student) => (
             <div key={student.id} className="card">
               <div className="flex justify-between items-start mb-4">
@@ -277,13 +287,13 @@ export default function StudentsPage() {
               </div>
               
               <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
+                <div className="min-w-0">
                   <span className="font-medium text-gray-500">Email:</span>
-                  <p className="text-gray-900">{student.email}</p>
+                  <p className="text-gray-900 break-all">{student.email}</p>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <span className="font-medium text-gray-500">Phone:</span>
-                  <p className="text-gray-900">{student.phone}</p>
+                  <p className="text-gray-900 break-all">{student.phone}</p>
                 </div>
                 <div>
                   <span className="font-medium text-gray-500">Age:</span>

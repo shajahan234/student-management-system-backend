@@ -6,6 +6,7 @@ import office.com.repository.StudentRepository;
 import office.com.repository.PaymentDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.lang.NonNull;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -38,7 +39,7 @@ public class StudentService {
         return studentRepository.save(student);
     }
 
-    public Student getStudentById(Long id) {
+    public Student getStudentById(@NonNull Long id) {
         Optional<Student> student = studentRepository.findById(id);
         return student.orElse(null);
     }
@@ -47,7 +48,7 @@ public class StudentService {
         return studentRepository.findAll();
     }
 
-    public Student updateStudent(Long id, Student studentDetails) {
+    public Student updateStudent(@NonNull Long id, Student studentDetails) {
         Optional<Student> student = studentRepository.findById(id);
         if (student.isPresent()) {
             Student existingStudent = student.get();
@@ -78,7 +79,7 @@ public class StudentService {
         return null;
     }
 
-    public boolean deleteStudent(Long id) {
+    public boolean deleteStudent(@NonNull Long id) {
         if (studentRepository.existsById(id)) {
             studentRepository.deleteById(id);
             return true;
@@ -100,7 +101,7 @@ public class StudentService {
     }
 
     // Payment Operations
-    public PaymentDetails recordPayment(Long studentId, PaymentDetails paymentDetails) {
+    public PaymentDetails recordPayment(@NonNull Long studentId, PaymentDetails paymentDetails) {
         Optional<Student> student = studentRepository.findById(studentId);
         if (student.isPresent()) {
             Student existingStudent = student.get();
@@ -116,7 +117,7 @@ public class StudentService {
         return null;
     }
 
-    public List<PaymentDetails> getPaymentHistoryByStudent(Long studentId) {
+    public List<PaymentDetails> getPaymentHistoryByStudent(@NonNull Long studentId) {
         return paymentDetailsRepository.findByStudentIdOrderByPaymentDateDesc(studentId);
     }
 
@@ -124,12 +125,12 @@ public class StudentService {
         return paymentDetailsRepository.findByPaymentDateBetween(startDate, endDate);
     }
 
-    public PaymentDetails getPaymentDetailsById(Long paymentId) {
+    public PaymentDetails getPaymentDetailsById(@NonNull Long paymentId) {
         Optional<PaymentDetails> payment = paymentDetailsRepository.findById(paymentId);
         return payment.orElse(null);
     }
 
-    public PaymentDetails updatePayment(Long paymentId, PaymentDetails paymentDetails) {
+    public PaymentDetails updatePayment(@NonNull Long paymentId, PaymentDetails paymentDetails) {
         Optional<PaymentDetails> payment = paymentDetailsRepository.findById(paymentId);
         if (payment.isPresent()) {
             PaymentDetails existingPayment = payment.get();
@@ -152,7 +153,7 @@ public class StudentService {
         return null;
     }
 
-    public boolean deletePayment(Long paymentId) {
+    public boolean deletePayment(@NonNull Long paymentId) {
         Optional<PaymentDetails> payment = paymentDetailsRepository.findById(paymentId);
         if (payment.isPresent()) {
             PaymentDetails existingPayment = payment.get();
@@ -169,12 +170,12 @@ public class StudentService {
         return false;
     }
 
-    public Double getTotalPaidByStudent(Long studentId) {
+    public Double getTotalPaidByStudent(@NonNull Long studentId) {
         List<PaymentDetails> payments = getPaymentHistoryByStudent(studentId);
         return payments.stream().mapToDouble(PaymentDetails::getAmountPaid).sum();
     }
 
-    public Double getRemainingFeesByStudent(Long studentId) {
+    public Double getRemainingFeesByStudent(@NonNull Long studentId) {
         Optional<Student> student = studentRepository.findById(studentId);
         return student.map(Student::getRemainingFees).orElse(0.0);
     }

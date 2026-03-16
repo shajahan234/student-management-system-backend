@@ -35,12 +35,14 @@ export default function StudentPaymentsPage() {
     fetchStudentAndPayments()
   }, [studentId])
 
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem('token')
+    return { 'Authorization': `Bearer ${token}` }
+  }
+
   const fetchStudentAndPayments = async () => {
     try {
-      const token = localStorage.getItem('token')
-      const headers = {
-        'Authorization': `Bearer ${token}`,
-      }
+      const headers = getAuthHeaders()
 
       const [studentRes, paymentsRes] = await Promise.all([
         fetch(`/api/students/${studentId}`, { headers }),
@@ -68,7 +70,8 @@ export default function StudentPaymentsPage() {
 
     try {
       const response = await fetch(`/api/students/${studentId}/payments/${paymentId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: getAuthHeaders()
       })
 
       if (response.ok) {

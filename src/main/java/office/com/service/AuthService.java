@@ -22,7 +22,13 @@ public class AuthService {
     private JwtUtil jwtUtil;
 
     public AuthResponse authenticate(AuthRequest request) {
-        User user = userRepository.findByUsername(request.getUsername())
+        if (request == null || request.getUsername() == null || request.getUsername().isBlank()) {
+            throw new RuntimeException("Username is required");
+        }
+        if (request.getPassword() == null) {
+            throw new RuntimeException("Password is required");
+        }
+        User user = userRepository.findByUsername(request.getUsername().trim())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
@@ -42,7 +48,12 @@ public class AuthService {
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole(User.Role.STUDENT); // Default role for registration
+        
+        // Handle Role assignment (default to STUDENT if not provided or invalid)
+        if (user.getRole() == null) {
+             user.setRole(User.Role.STUDENT);
+        }
+        
         userRepository.save(user);
 
         String token = jwtUtil.generateToken(user.getUsername(), user.getRole().name());
